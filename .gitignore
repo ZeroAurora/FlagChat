@@ -1,0 +1,5 @@
+.streamlit/secrets.toml
+database.db*
+__pycache__/
+prompts/*
+!prompts/README.md
