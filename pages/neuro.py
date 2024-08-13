@@ -86,10 +86,10 @@ def log_message(user_id: int, msgs: str, is_filtered: bool):
 
 def run_chat_complete():
     prompt = make_prompt_chain(
-        st.session_state.messages, flag=get_flag(st.session_state.id)
+        st.session_state.messages, flag=get_flag(st.session_state.id, "neuro")
     )
     response = openai.chat.completions.create(
-        messages=prompt, model=st.secrets.openai.model, temperature=0.8, max_tokens=500
+        messages=prompt, model=st.secrets.openai.model, temperature=0.1, max_tokens=500
     )
 
     resp_content = response.choices[0].message.content
