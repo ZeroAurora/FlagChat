@@ -52,3 +52,5 @@ code = st.text_input("请输入你的临时用户识别码：")
 if st.button("登录"):
     user = verify_with_ret2shell(code)
     login(user)
+
+"如果登录出现问题，请先 [点我](/) 跳转到首页，选择一个题目，你会自动回到这里。"
