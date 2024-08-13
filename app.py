@@ -8,4 +8,5 @@ metadata_obj.create_all(conn.engine)
 with conn.session as s:
     s.execute(text("PRAGMA journal_mode=WAL;"))
 
-st.switch_page("pages/login.py")
+if st.button("Neuro"):
+    st.switch_page("pages/neuro.py")

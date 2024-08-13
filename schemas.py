@@ -24,5 +24,6 @@ messages = Table(
     Column("user_id", Integer),
     Column("timestamp", Float),
     Column("messages", String),
+    Column("type", String),
     Column("is_filtered", Boolean),
 )

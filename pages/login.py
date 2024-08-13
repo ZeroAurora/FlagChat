@@ -41,7 +41,7 @@ def login(user: dict):
     if user:
         st.session_state.id = user["id"]
         create_or_update_user(user)
-        st.switch_page("pages/chat.py")
+        st.switch_page(st.session_state.next_page)
     else:
         st.error("登录失败，请检查用户识别码是否正确！")
 

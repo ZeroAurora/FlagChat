@@ -10,6 +10,7 @@ from schemas import messages
 from utils.flag import get_flag
 
 if "id" not in st.session_state:
+    st.session_state.next_page = "pages/neuro.py"
     st.switch_page("pages/login.py")
 
 openai = OpenAI(api_key=st.secrets.openai.api_key, base_url=st.secrets.openai.base_url)
@@ -18,7 +19,7 @@ conn = st.connection("db", type="sql")
 
 @st.cache_resource
 def jinja_env():
-    return Environment(loader=FileSystemLoader("prompts"))
+    return Environment(loader=FileSystemLoader("prompts/neuro"))
 
 
 def make_prompt_chain(messages: list[dict], **kwargs):
@@ -76,6 +77,7 @@ def log_message(user_id: int, msgs: str, is_filtered: bool):
                 user_id=user_id,
                 timestamp=datetime.now().timestamp(),
                 messages=msgs,
+                type="neuro",
                 is_filtered=is_filtered,
             )
         )
@@ -87,7 +89,7 @@ def run_chat_complete():
         st.session_state.messages, flag=get_flag(st.session_state.id)
     )
     response = openai.chat.completions.create(
-        messages=prompt, model=st.secrets.openai.model, temperature=0.5, max_tokens=500
+        messages=prompt, model=st.secrets.openai.model, temperature=0.8, max_tokens=500
     )
 
     resp_content = response.choices[0].message.content
@@ -138,7 +140,12 @@ if prompt := st.chat_input(
     "每分钟最多发送 2 条消息，如果消息触发上游过滤，则一小时之内无法发送消息。",
     disabled=is_in_timeout or st.session_state.ended,
 ):
-    if len(prompt) < 100:
+    if is_in_timeout or st.session_state.ended:
+        with st.chat_message("system", avatar="🐢"):
+            st.markdown("当前无法发送消息。点击上面的重载按钮来刷新状态。")
+
+    elif len(prompt) < 100:
+        prompt = "Chat: " + prompt
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
@@ -147,9 +154,10 @@ if prompt := st.chat_input(
         render_completion(resp_content, finish_reason)
         log_message(
             st.session_state.id,
-            json.dumps(st.session_state.messages),
+            json.dumps(st.session_state.messages, ensure_ascii=False),
             st.session_state.filtered,
         )
+
     else:
         with st.chat_message("system", avatar="🐢"):
             st.markdown("消息过长，请重新发送。")
