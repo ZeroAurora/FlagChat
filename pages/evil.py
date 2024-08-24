@@ -95,7 +95,7 @@ if prompt := st.chat_input(
 
     elif "flag" in prompt.lower() or "旗" in prompt:
         with st.chat_message("system", avatar="🐢"):
-            st.markdown("请斟酌你的用词，不要试图获得 Flag！")
+            st.markdown("请斟酌你的用词，不要妄图轻易获得 Flag！")
 
     elif len(prompt) <= 50:
         prompt = "Chat: " + prompt
