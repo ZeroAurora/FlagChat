@@ -77,7 +77,7 @@ if prompt := st.chat_input(
 ):
     if is_in_timeout or st.session_state.ended:
         with st.chat_message("system", avatar="🐢"):
-            st.markdown("当前无法发送消息。点击上面的重载按钮来刷新状态。")
+            st.markdown(f"当前无法发送消息（{timeout_type}）。点击上面的重载按钮来刷新状态。")
 
     elif len(prompt) <= 50:
         prompt = "Chat: " + prompt
