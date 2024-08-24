@@ -35,10 +35,10 @@ def render_completion(resp_content, finish_reason):
         st.session_state.messages.append({"role": "assistant", "content": resp_content})
         with st.chat_message("assistant"):
             st.markdown(resp_content)
-        if len(st.session_state.messages) > 10:
+        if len(st.session_state.messages) >= 10:
             st.session_state.ended = True
             with st.chat_message("system", avatar="🐢"):
-                st.markdown("消息过多（至多 5 轮对话），请重新开始。")
+                st.markdown("消息过多（至多 5 轮对话），请点击“重置消息”重新开始。")
     else:
         st.session_state.ended = True
         st.session_state.filtered = True
