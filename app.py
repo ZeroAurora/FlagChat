@@ -10,3 +10,6 @@ with conn.session as s:
 
 if st.button("Neuro"):
     st.switch_page("pages/neuro.py")
+
+if st.button("Evil"):
+    st.switch_page("pages/evil.py")

@@ -1,12 +1,4 @@
-from sqlalchemy import (
-    MetaData,
-    Table,
-    Column,
-    Integer,
-    String,
-    Float,
-    Boolean,
-)
+from sqlalchemy import Boolean, Column, Float, Integer, MetaData, String, Table
 
 metadata_obj = MetaData()
 

@@ -8,6 +8,9 @@ from schemas import users
 
 conn = st.connection("db", type="sql")
 
+if "next_page" not in st.session_state:
+    st.session_state.next_page = "app.py"
+
 
 def verify_with_ret2shell(code: str) -> dict | None:
     r2s_url = st.secrets.ret2shell_url
@@ -46,11 +49,12 @@ def login(user: dict):
         st.error("登录失败，请检查用户识别码是否正确！")
 
 
+if st.secrets.debug:
+    login({"id": 0, "account": "test"})
+
 st.title("Login with Ret2Shell")
 code = st.text_input("请输入你的临时用户识别码：")
 
 if st.button("登录"):
     user = verify_with_ret2shell(code)
     login(user)
-
-"如果登录出现问题，请先 [点我](/) 跳转到首页，选择一个题目，你会自动回到这里。"
