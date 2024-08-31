@@ -16,3 +16,6 @@ if st.button("Evil"):
 
 if st.button("Complete"):
     st.switch_page("pages/complete.py")
+
+if st.button("Complete Revenge"):
+    st.switch_page("pages/complete_rev.py")

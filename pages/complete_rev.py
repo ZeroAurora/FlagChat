@@ -12,13 +12,13 @@ openai = OpenAI(api_key=st.secrets.openai.api_key, base_url=st.secrets.openai.ba
 
 
 def get_prefix(flag: str):
-    env = jinja_env("complete")
+    env = jinja_env("complete_rev")
     return env.get_template("prompt_prefix.md.jinja").render(flag=flag)
 
 
 def make_prompt(user_input: str):
     prefix = get_prefix(
-        flag=get_flag(user_id=st.session_state.id, problem="complete")
+        flag=get_flag(user_id=st.session_state.id, problem="complete_rev")
     )
     return f"{prefix}\n\n{user_input}"
 
@@ -27,7 +27,7 @@ def run_completion(user_input: str):
     response = openai.completions.create(
         model=st.secrets.openai.completion_model,
         prompt=make_prompt(user_input),
-        max_tokens=100,
+        max_tokens=10,
         temperature=0.1,
     )
 
@@ -45,16 +45,16 @@ def render_completion(resp_content, finish_reason):
 
 
 def prefilter(user_input: str):
-    return any([c in printable for c in user_input]) or len(user_input) > 3
+    return any([c in printable for c in user_input]) or len(user_input) > 20
 
 # ----------
 
 
 if "id" not in st.session_state:
-    st.session_state.next_page = "pages/complete.py"
+    st.session_state.next_page = "pages/complete_rev.py"
     st.switch_page("pages/login.py")
 
-timeout_type = get_timeout_type(st.session_state.id)
+timeout_type = get_timeout_type(st.session_state.id, msgs_per_min=5)
 is_in_timeout = timeout_type != "OK"
 
 # this might not be refreshed, so double check on input
@@ -71,13 +71,13 @@ with st.form("form"):
 
 if submit:
     if prefilter(user_input):
-        st.error("限制：禁止包含 ASCII Printable，最多 3 个 Unicode 字符。请重新发送。")
+        st.error("限制：禁止包含 ASCII Printable，最多 20 个 Unicode 字符。请重新发送。")
     elif not is_in_timeout:
         resp_content, finish_reason = run_completion(user_input)
         render_completion(resp_content, finish_reason)
         log_message(
             user_id=st.session_state.id,
-            type="complete",
+            type="complete_rev",
             msgs=json.dumps({"prompt": user_input, "response": resp_content}, ensure_ascii=False),
             is_filtered=finish_reason == "content_filter",
         )
