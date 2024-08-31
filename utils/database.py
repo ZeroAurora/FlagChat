@@ -7,7 +7,7 @@ from schemas import messages
 
 conn = st.connection("db", type="sql")
 
-def get_timeout_type(user_id: int):
+def get_timeout_type(user_id: int, msgs_per_min: int = 2):
     # some backdoor for testing
     if user_id == 0:
         return "OK"
@@ -30,7 +30,7 @@ def get_timeout_type(user_id: int):
             .where(messages.c.user_id == user_id)
             .where(messages.c.timestamp > datetime.now().timestamp() - 60)
         )
-        if res.scalar() >= 2:
+        if res.scalar() >= msgs_per_min:
             return "RATELIMIT"
         return "OK"
     

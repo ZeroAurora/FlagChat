@@ -13,3 +13,6 @@ if st.button("Neuro"):
 
 if st.button("Evil"):
     st.switch_page("pages/evil.py")
+
+if st.button("Complete"):
+    st.switch_page("pages/complete.py")

@@ -1,3 +1,4 @@
 .streamlit/secrets.toml
 database/
 __pycache__/
+.vscode/
