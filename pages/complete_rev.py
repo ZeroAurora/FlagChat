@@ -37,15 +37,21 @@ def run_completion(user_input: str):
     return resp_content, finish_reason
 
 
-def render_completion(resp_content, finish_reason):
-    if finish_reason != "content_filter":
-        st.markdown(resp_content)
-    else:
-        st.markdown("您的消息被过滤了，接下来一小时您将无法发送消息。")
-
-
 def prefilter(user_input: str):
     return any([c in printable for c in user_input]) or len(user_input) > 20
+
+def postfilter(resp_content: str):
+    return any([c in printable for c in resp_content])
+
+
+def render_completion(resp_content, finish_reason):
+    if finish_reason == "content_filter":
+        st.error("您的消息被过滤了，接下来一小时您将无法发送消息。")
+    elif postfilter(resp_content):
+        st.error("输出限制：禁止包含 ASCII Printable。请重新发送。")
+    else:
+        st.markdown(resp_content)
+
 
 # ----------
 
@@ -54,7 +60,7 @@ if "id" not in st.session_state:
     st.session_state.next_page = "pages/complete_rev.py"
     st.switch_page("pages/login.py")
 
-timeout_type = get_timeout_type(st.session_state.id, msgs_per_min=5)
+timeout_type = get_timeout_type(st.session_state.id, msgs_per_min=10)
 is_in_timeout = timeout_type != "OK"
 
 # this might not be refreshed, so double check on input
@@ -71,7 +77,7 @@ with st.form("form"):
 
 if submit:
     if prefilter(user_input):
-        st.error("限制：禁止包含 ASCII Printable，最多 20 个 Unicode 字符。请重新发送。")
+        st.error("输入限制：禁止包含 ASCII Printable，最多 20 个 Unicode 字符。请重新发送。")
     elif not is_in_timeout:
         resp_content, finish_reason = run_completion(user_input)
         render_completion(resp_content, finish_reason)
